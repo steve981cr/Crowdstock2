@@ -4,10 +4,28 @@ angular.module('starter.controllers', [])
 // A simple controller that fetches a list of data from a service
     .controller('PECtrl', function ($scope, $http, $rootScope, PubNub)  {
         $scope.model = {};
+        $scope.model.data = {
+            PEVsDate: [],
+            realtime: []
+        };
         $scope.model.isOpenComplete = true;
         $scope.$watch("isOpenComplete", function(n,o) {
             if (n == o) return;
             $scope.model.isOpenComplete = n;
+        });
+
+        $scope.model.data.crowdsourced_actual = "";
+        $scope.$watch(function () {return $rootScope.pe_data; }, function (n, o) {
+            if (n == undefined) return;
+            $scope.model.data.crowdsourced_median = n.guess_pe;
+            $scope.model.data.crowdsourced_actual = n.actual_pe;
+
+            $scope.median_graph_data.pop();
+            $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
+
+            $scope.median_graph_data.pop();
+            $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
+            $scope.$broadcast('regraph');
         });
 
         $scope.model.estimate = "";
@@ -15,10 +33,6 @@ angular.module('starter.controllers', [])
             xaxis: {mode: "time"}
         };
 
-        $scope.model.data = {
-            PEVsDate: [],
-            realtime: []
-        };
         $scope.model.data.crowdsourced = [];
         $scope.model.data.crowdsourced_median = 0;
 
@@ -43,7 +57,7 @@ angular.module('starter.controllers', [])
                 channel: "capital_one",
                 message: {pe_estimate : estimate}
             });
-            $http.post("/company/0", {company :$rootScope.company, metric : "PE", estimate : estimate })
+            $http.post("/company/0/guess", {company :$rootScope.company, metric : "PE", estimate : estimate })
                 .success(function(data, status, headers, config) {
                     console.log("POSTed the estimate!");
             }).
@@ -53,10 +67,10 @@ angular.module('starter.controllers', [])
         };
 
        $scope.median = function(values) {
-           console.log(values);
-            values.sort( function(a,b) {return a - b;} );
+           for (var i = 0; i < values.length; i++)
+                values[i] = parseInt(values[i]);
 
-           console.log(values);
+            values.sort( function(a,b) {return a - b;} );
 
             var half = Math.floor(values.length/2);
 
@@ -64,7 +78,7 @@ angular.module('starter.controllers', [])
                 return values[half];
             else
                 return (values[half-1] + values[half]) / 2.0;
-        }
+        };
 
         $scope.median_graph_opts = {
             bars: {
@@ -104,7 +118,7 @@ angular.module('starter.controllers', [])
 
         $scope.onsub = function(){};
     })
-    .controller("InfoCtrl", function ($scope, $stateParams, $rootScope, PubNub) {
+    .controller("InfoCtrl", function ($http, $scope, $stateParams, $rootScope, PubNub) {
         $scope.header = {
             title : $stateParams.company
         };
@@ -117,6 +131,16 @@ angular.module('starter.controllers', [])
                 $rootScope.$on(PubNub.ngMsgEv("capital_one"), function(event, payload) {
                 });
         };
+
+        $http.get("/company/0?company=" + $rootScope.company )
+            .success(function(data, status, headers, config) {
+                $rootScope.pe_data = {
+                    actual_pe : data.actual, guess_pe : data.guess
+                };
+            }).
+            error(function(data, status, headers, config) {
+                console.log("Error!");
+            });
 
         $scope.subscribe();
     })
@@ -134,13 +158,15 @@ angular.module('starter.controllers', [])
                 show: true
             },
             xaxis: {
-                ticks: [[0.5,"Q1"],[1.5,"Q2"],[2.5,"Q3"],[3.5,"Q4"]],
+                ticks: [[0.5,"Q3"],[1.5,"Q4"],[2.5,"Q1"],[3.5,"Q2"]],
                 tickLength: 0, // disable tick
                 min: 0,
                 max: 4
             },
             yaxis: {
-                tickLength: 0 // disable tick
+                tickLength: 0, // disable tick,
+                min: 5000,
+                max : 6000
             }
         };
 
@@ -149,12 +175,12 @@ angular.module('starter.controllers', [])
             realtime: []
         };
 
-        // TODO: ADD AJAX CALL!
-        var x = [];
-        for (var i = 0; i < 4; i++) {
-            var y = Math.floor(Math.random() * 100000) + 50000;
-            $scope.model.data.revQuarterly.push([i, y]);
-        }
+        $scope.model.data.revQuarterly = [
+            [0, 5651],
+            [1, 5544],
+            [2, 5370],
+            [3, 5468]
+        ];
 
         $scope.model.visibility = true;
         $scope.toggleVisibility = function () {
@@ -176,7 +202,7 @@ angular.module('starter.controllers', [])
                 });
         };
     })
-    .controller('HomeCtrl', function ($scope, $state, $http) {
+    .controller('HomeCtrl', function ($scope, $state, $http, $rootScope) {
         //TODO: Replace with AJAX
         $scope.companies = [];
         $http.get("/company")
@@ -190,7 +216,18 @@ angular.module('starter.controllers', [])
             });
 
         $scope.selectCompany = function (comp) {
-            $state.go('info', {company : comp});
+            $http.get("/company/0?company=" + comp )
+                .success(function(data, status, headers, config) {
+                    $rootScope.pe_data = {
+                        actual_pe : data.actual, guess_pe : data.guess
+                    };
+
+                    $state.go('info', {company : comp });
+                    console.log("POST!");
+                }).
+                error(function(data, status, headers, config) {
+                    console.log("Error!");
+                });
         }
     })
     .directive('estimateBtn', function ($ionicPopup, $ionicSlideBoxDelegate) {

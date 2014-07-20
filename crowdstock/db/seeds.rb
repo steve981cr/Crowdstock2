@@ -8,11 +8,7 @@
 Company.create([{name: 'Capital One' },{name: 'Yahoo'},{name: 'Apple'},{name: 'Google'},{name: 'Microsoft'}])
 User.create([{username: 'steve@gmail.com', password: '123abc' },{username: 'mario@gmail.com', password: '123abc' },{username: 'kim@gmail.com', password: '123abc'},{username: 'sam@gmail.com', password: '123abc' },{username: 'john@gmail.com', password: '123abc'}])
 
-50.times do
+100.times do
   Guess.create(company_id: rand(5)+1, user_id: rand(5)+1, pe_guess: rand(40)+1, following: true)
-
-end
-50.times do
-  Guess.create(company_id: rand(5)+1, user_id: rand(5)+1, following: true)
 
 end
