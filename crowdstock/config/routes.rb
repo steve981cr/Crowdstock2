@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   resources :company
   get '/company/:company_id/guess/new', to: "guess#new"
   post '/company/:company_id/guess', to: "guess#create"
-  get '/', to: "user#new"
+  get '/', to: "user#index"
   post '/user', to: "user#create"
   post '/user/sign_in', to: "user#sign_in"
 end

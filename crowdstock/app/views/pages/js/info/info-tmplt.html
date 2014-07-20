@@ -1,0 +1,117 @@
+<!--
+  This template loads for the 'tab.about' state (app.js)
+-->
+<ion-view title="{{header.title}}">
+    <ion-content padding="true">
+        <div ng-controller="RevenueCtrl">
+            <div class="list head">
+                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
+                    <h2 style="display: inline-block;">Revenue</h2>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+
+                    <h2 style="float: right;display: inline-block;">$54.93</h2>
+                </div>
+
+                <div class="item details" slide="model.visibility" open="isOpenComplete">
+                    <ion-slide-box show-pager="false" delegate-handle="revenueScroller">
+                        <ion-slide>
+                            <div class="graph-title">
+                                <span>Revenue per Quarter</span>
+                                <div graph="revQuarterlyOpts" model="model.data.revQuarterly"></div>
+                            </div>
+                        </ion-slide>
+                        <ion-slide>
+                            <div ng-show="model.gaveEstimate">
+                                <h2 class="tac underline">Estimates</h2>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tal" style="padding-top: 0;">
+                                        <h2>You:</h2>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tar" style="padding-top: 0;">
+                                        <h1 style="font-size: 30px;" ng-bind="model.estimate | currency">
+                                        </h1>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tal" style="padding-top: 0;">
+                                        <h2>Community:</h2>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tar" style="padding-top: 0;">
+                                        <h1 style="font-size: 30px;">
+                                            $888 M
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="!model.gaveEstimate">
+                                <p class="normal">Please give your estimate to view the community says!</p>
+                            </div>
+                        </ion-slide>
+                    </ion-slide-box>
+                </div>
+            </div>
+            <div estimate-btn onsub="onsub"></div>
+        </div>
+
+        <div ng-controller="DummyCtrl">
+            <div class="list head">
+                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
+                    <h2 style="display: inline-block;">Earn</h2>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+
+                    <h2 style="float: right;display: inline-block;">$17.03</h2>
+                </div>
+            </div>
+            <div estimate-btn onsub="onsub"></div>
+        </div>
+
+        <div ng-controller="PECtrl">
+            <div class="list head">
+                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
+                    <h2 style="display: inline-block;">P/E Ratio</h2>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+
+                    <h2 style="float: right;display: inline-block;">18.34</h2>
+                </div>
+
+                <div class="item details" slide="model.visibility" open="isOpenComplete">
+                    <ion-slide-box show-pager="false">
+                        <ion-slide>
+                            <div class="graph-title">
+                                <span>Realtime Community PE</span>
+
+                                <div graph="median_graph_opts" model="median_graph_data"></div>
+
+                            </div>
+                        </ion-slide>
+                        <ion-slide>
+                            More ideas..?
+                        </ion-slide>
+                    </ion-slide-box>
+                </div>
+            </div>
+            <div estimate-btn onsub="onsub"></div>
+        </div>
+
+        <div ng-controller="DummyCtrl">
+            <div class="list head">
+                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
+                    <h2 style="display: inline-block;">Stock Price</h2>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+
+                    <h2 style="float: right;display: inline-block;">$4.29</h2>
+                </div>
+            </div>
+            <div estimate-btn onsub="onsub"></div>
+        </div>
+    </ion-content>
+</ion-view>
+

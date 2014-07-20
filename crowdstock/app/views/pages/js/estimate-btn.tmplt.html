@@ -1,0 +1,24 @@
+<div class="estimate-entry">
+    <div class="btn-row">
+        <button class="button button-positive rounded"
+                style="display: block;margin: auto;" ng-click="toggleView(true)"
+                ng-disabled="disabled.giveEstimateBtn">
+            Give Estimate
+        </button>
+    </div>
+    <div class="entry-row" style="display: none">
+        <div class="list">
+            <label class="item item-input estimate">
+                <input num type="text" placeholder="Estimate" ng-model="data.entry">
+            </label>
+            <button class="button rounded" ng-click="submit()">
+                Submit
+            </button>
+            <button class="button rounded" ng-click="toggleView(false)"
+                    ng-disabled="disabled.cancelBtn">
+                Cancel
+            </button>
+        </div>
+
+    </div>
+</div>

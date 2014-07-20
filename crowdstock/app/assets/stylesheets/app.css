@@ -1,0 +1,94 @@
+.item.details {
+    height: 150px;
+    padding: 0;
+    margin-top: 2px;
+    border-top: 0;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 25px !important;
+    border-bottom-left-radius: 25px !important;
+}
+
+.graph-title {
+    text-align: center;
+}
+
+.graph {
+    width: 100%;
+    height: 130px;
+    min-height: 5px;
+}
+
+label.estimate {
+    width: 46%;
+    display: inline-block;
+}
+
+.list.head {
+    margin-bottom: 5px;
+}
+
+.list.head .item.rounded.open {
+    border-top-left-radius: 25px !important;
+    border-top-right-radius: 25px !important;
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
+
+.list.head .item.rounded.closed {
+    border-top-left-radius: 25px !important;
+    border-top-right-radius: 25px !important;
+    border-bottom-right-radius: 25px !important;
+    border-bottom-left-radius: 25px !important;
+}
+
+.estimate-entry {
+    margin-bottom: 15px;
+    height: 52px;
+}
+
+.space {
+    height: 20px;
+}
+
+#home-page {
+    text-align: center;
+}
+
+.rounded {
+    border-radius: 25px !important;
+}
+
+.toggle-btn {
+    padding-bottom: 3px;
+    padding-top: 10px;
+    background-color: skyblue;
+}
+
+.tac {
+    text-align: center;
+}
+
+.tal {
+    text-align: left;
+}
+
+.tar{
+    text-align: right;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+p.normal {
+    white-space: normal;
+}
+
+#heatmapArea {
+    position:relative;
+    float:left;
+    width:600px;
+    height:400px;
+    border:1px dashed black;
+}

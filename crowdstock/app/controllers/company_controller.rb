@@ -4,7 +4,8 @@ class CompanyController < ActionController::Base
   def index
     # if session[:user_id]
       @company = Company.all
-      list = {companies: @company}.to_json
+      list = {companies: @company}
+      render json: list
     # else
       # redirect_to "/"
     # end

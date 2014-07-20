@@ -43,7 +43,7 @@ angular.module('starter.controllers', [])
                 channel: "capital_one",
                 message: {pe_estimate : estimate}
             });
-            $http.post("/api/estimate", {company :$rootScope.company, metric : "PE", estimate : estimate })
+            $http.post("/company/0", {company :$rootScope.company, metric : "PE", estimate : estimate })
                 .success(function(data, status, headers, config) {
                     console.log("POSTed the estimate!");
             }).
@@ -176,9 +176,17 @@ angular.module('starter.controllers', [])
                 });
         };
     })
-    .controller('HomeCtrl', function ($scope, $state) {
+    .controller('HomeCtrl', function ($scope, $state, $http) {
         //TODO: Replace with AJAX
-        $scope.companies = ["Apple", "Microsoft", "Capital One", "Google", "Yahoo", "Facebook"];
+        $scope.companies = [];
+        $http.get("/company")
+            .success(function(data, status, headers, config) {
+                $scope.companies = data.companies;
+                console.log("GET the estimate!");
+            }).
+            error(function(data, status, headers, config) {
+                console.log("Error GET estimate");
+            });
 
         $scope.selectCompany = function (comp) {
             $state.go('info', {company : comp});
