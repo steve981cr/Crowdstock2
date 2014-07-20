@@ -13,7 +13,7 @@ window.addEventListener("load", function () {
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.services', 'starter.controllers'])
+angular.module('starter', ['ionic', 'starter.services', 'starter.controllers', 'ngAnimate'])
 
     .config(function ($stateProvider, $urlRouterProvider) {
 
@@ -24,8 +24,7 @@ angular.module('starter', ['ionic', 'starter.services', 'starter.controllers'])
         $stateProvider
             .state('info', {
                 url: '/info',
-                templateUrl: 'js/info/info-tmplt.html',
-                controller: 'InfoCtrl'
+                templateUrl: 'js/info/info-tmplt.html'
             });
 
         // if none of the above states are matched, use this as the fallback

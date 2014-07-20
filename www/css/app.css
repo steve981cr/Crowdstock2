@@ -1,0 +1,14 @@
+.item.details {
+    height: 150px;
+    padding: 0;
+}
+
+.graph-title {
+    text-align: center;
+}
+
+.graph {
+    width: 100%;
+    height: 130px;
+    min-height: 5px;
+}
