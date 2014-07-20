@@ -75,7 +75,9 @@ angular.module('starter.controllers', [])
         $scope.dummy.dummy_graph.reverse();
 
         $scope.model.gaveEstimate = false;
-        $scope.onsub = function(estimate) {
+        $scope.onsub = function(estimate,slideBox) {
+            slideBox.$getByHandle('peScroller').slide(1);
+
             $scope.model.estimate = estimate;
             $scope.model.gaveEstimate = true;
 
