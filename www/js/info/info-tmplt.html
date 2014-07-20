@@ -1,59 +1,59 @@
 <!--
   This template loads for the 'tab.about' state (app.js)
 -->
-<ion-view title="About Ionic">
+<ion-view title="CrowdStock">
   <ion-content padding="true">
     <h4>P/E Ratio</h4>
     <div class="card">
-        <div class="item item-text-wrap">
+        <div class="item item-text-wrap" style="padding: 5px 5px 0px;">
             <ion-slide-box show-pager="false">
                 <ion-slide>
-                    <div>
-                        <div class="box">
-                            <h1>
-                                18.34
-                            </h1>
+                    <div class="row">
+                        <div class="col" style="position: relative">
+                                <h2 style="margin-top: -10px;height: 20px; position: absolute; top:50%">Today: </h2>
+                        </div>
+                        <div class="col">
+                            <h1>18.34</h1>
                         </div>
                     </div>
                 </ion-slide>
                 <ion-slide>
-                    <div class="box">
+                    <div>
                         <graph></graph>
-                        <div class="graph" style="height:100px;width:95%"></div>
+                        <div class="graph" style="height:100px;width:97%"></div>
                     </div>
                 </ion-slide>
             </ion-slide-box>
         </div>
     </div>
-      <button class="button button-positive">
+      <button class="button button-positive" style="display: block;margin: auto;">
           Give Estimate
       </button>
 
-        <br /><br />
-
       <h4>Revenue</h4>
       <div class="card">
-          <div class="item item-text-wrap">
+          <div class="item item-text-wrap" style="padding: 5px 5px 0px;">
               <ion-slide-box show-pager="false">
                   <ion-slide>
-                      <div>
-                          <div class="box">
-                              <h1>
-                                  $923.32
-                              </h1>
+                      <div class="row">
+                          <div class="col" style="position: relative">
+                              <h2 style="margin-top: -10px;height: 20px; position: absolute; top:50%">Today: </h2>
+                          </div>
+                          <div class="col">
+                              <h1>$93.23</h1>
                           </div>
                       </div>
                   </ion-slide>
                   <ion-slide>
-                      <div class="box">
+                      <div>
                           <graph></graph>
-                          <div class="graph" style="height:100px;width:95%"></div>
+                          <div class="graph" style="height:100px;width:97%"></div>
                       </div>
                   </ion-slide>
               </ion-slide-box>
           </div>
       </div>
-      <button class="button button-positive">
+      <button class="button button-positive" style="display: block;margin: auto;">
           Give Estimate
       </button>
   </ion-content>

@@ -11,11 +11,19 @@ angular.module('starter.controllers', [])
             restrict : "EA",
             template : "<div></div>",
             link : function() {
-                var d1 = [[1, 300], [2, 600], [3, 550], [4, 400], [5, 300]];
+                var x = [];
+                for (var i = 1; i < 31; i++) {
+                    var y = new Date();
+                    y.setDate(y.getDate() + i);
+                    x.push([y.getTime(), i]);
+                }
+
                 $(document).ready(function () {
-                    $.plot($(".graph"), [d1]);
+                    $.plot($(".graph"), [x], {
+                        xaxis: {mode: "time"}
+                    });
                 });
-                $(window).resize(function() { $.plot($(".graph"), [d1]);});
+                $(window).resize(function() {console.log("rs"); $.plot($(".graph"), [x]);});
             }
         }
     })
