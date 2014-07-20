@@ -48,6 +48,32 @@ angular.module('starter.controllers', [])
             $scope.model.visibility = !$scope.model.visibility;
         };
 
+        $scope.dummy = {};
+        $scope.dummy.dummy_graph_opts = {
+            series: {
+                lines: { show: true }
+            },
+            xaxis: {
+                ticks: [[0,"Aug"],[2,"Oct"],[4,"Dec13"],[6,"Feb"], [8, "Apr"], [10, "Jun"]],
+                tickLength: 0
+            }
+        };
+        $scope.dummy.dummy_graph = [
+            [11,11.42],
+            [10,11.36],
+            [9,10.85],
+            [8, 10.44],
+            [7, 10.90],
+            [6, 10.37],
+            [5, 10.25],
+            [4, 11.12],
+            [3, 10.40],
+            [2, 10.00],
+            [1, 10.01],
+            [0, 9.40]
+        ];
+        $scope.dummy.dummy_graph.reverse();
+
         $scope.model.gaveEstimate = false;
         $scope.onsub = function(estimate) {
             $scope.model.estimate = estimate;
@@ -235,9 +261,12 @@ angular.module('starter.controllers', [])
             restrict : "A",
             templateUrl: "js/estimate-btn.tmplt.html",
             scope : {
-                onsub : "="
+                onsub : "=",
+                txt : "@"
             },
             link : function (sc, el) {
+                sc.myText = sc.txt || "Give Estimate";
+
                 sc.vis = {
                     entry : false
                 };

@@ -1,14 +1,13 @@
 <ion-view title="CrowdStock" hide-nav-bar="true">
-    <ion-content padding="true">
+    <ion-content>
         <div ng-controller="HomeCtrl" id="home-page">
             <img src="img/logo-small.png" />
-            <h1>Your Portfolio</h1>
-
-            <div class="list">
-                <div class="item" ng-repeat="comp in companies">
+            <br><br>
+            <ul class="list">
+                <li class="item" ng-repeat="comp in companies" style="background-color: skyblue ">
                     <span ng-click="selectCompany(comp.name)">{{comp.name}}</span>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     </ion-content>
 </ion-view>

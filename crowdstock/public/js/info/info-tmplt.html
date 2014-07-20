@@ -55,7 +55,7 @@
                     </ion-slide-box>
                 </div>
             </div>
-            <div estimate-btn onsub="onsub"></div>
+            <div estimate-btn onsub="onsub" txt="Give Estimate (Next Quarter)"></div>
         </div>
 
         <div ng-controller="DummyCtrl">
@@ -85,14 +85,22 @@
                     <ion-slide-box show-pager="false">
                         <ion-slide>
                             <div class="graph-title">
-                                <span>Realtime Community PE</span>
-
-                                <div graph="median_graph_opts" model="median_graph_data"></div>
-
+                                <span>P/E History</span>
+                                <div graph="dummy.dummy_graph_opts" model="dummy.dummy_graph"></div>
                             </div>
                         </ion-slide>
                         <ion-slide>
-                            More ideas..?
+                            <div ng-show="model.gaveEstimate">
+                                <div class="graph-title">
+                                    <span>Realtime Community PE</span>
+
+                                    <div graph="median_graph_opts" model="median_graph_data"></div>
+
+                                </div>
+                            </div>
+                            <div ng-show="!model.gaveEstimate">
+                                <p class="normal">Please give your estimate to view the community says!</p>
+                            </div>
                         </ion-slide>
                     </ion-slide-box>
                 </div>
