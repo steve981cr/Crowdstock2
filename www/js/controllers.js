@@ -2,12 +2,12 @@ angular.module('starter.controllers', [])
 
 
 // A simple controller that fetches a list of data from a service
-.controller('PECtrl', function($scope, PetService) {
+    .controller('PECtrl', function ($scope, PetService) {
         $scope.model = {};
 
         $scope.model.data = {
-            PEVsDate : [],
-            realtime : []
+            PEVsDate: [],
+            realtime: []
         };
         var x = [];
         for (var i = 1; i < 31; i++) {
@@ -17,18 +17,18 @@ angular.module('starter.controllers', [])
         }
 
         $scope.model.visibility = true;
-        $scope.toggleVisibility = function() {
+        $scope.toggleVisibility = function () {
             $scope.model.visibility = !$scope.model.visibility;
         }
-})
+    })
     .directive('slide', function () {
         return {
             restrict: "A",
-            scope : {
-                "visible" : "=slide"
+            scope: {
+                "visible": "=slide"
             },
-            link : function(sc, el) {
-                sc.$watch("visible", function(n, o) {
+            link: function (sc, el) {
+                sc.$watch("visible", function (n, o) {
                     if (n == o) return;
                     if (!n) {
                         $(el).slideUp();
@@ -43,12 +43,12 @@ angular.module('starter.controllers', [])
     })
     .directive('graph', function () {
         return {
-            restrict : "EA",
-            scope : {
-                "model" : "="
+            restrict: "EA",
+            scope: {
+                "model": "="
             },
             templateUrl: 'js/graph.tmplt.html',
-            link : function(sc, el) {
+            link: function (sc, el) {
                 var $el = $($(el).find(".graph")[0]);
                 var renderGraph = function () {
                     console.log('sam');
@@ -56,7 +56,7 @@ angular.module('starter.controllers', [])
                         xaxis: {mode: "time"}
                     });
                 };
-                    renderGraph();
+                renderGraph();
 
 
                 sc.$on('hideEvt', function () {

@@ -1,5 +1,3 @@
-// Ionic Starter App
-
 window.addEventListener("load", function () {
     // Set a timeout...
     setTimeout(function () {
@@ -8,11 +6,6 @@ window.addEventListener("load", function () {
     }, 0);
 });
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.services', 'starter.controllers', 'ngAnimate'])
 
     .config(function ($stateProvider, $urlRouterProvider) {
@@ -29,6 +22,5 @@ angular.module('starter', ['ionic', 'starter.services', 'starter.controllers', '
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/info');
-
     });
 
