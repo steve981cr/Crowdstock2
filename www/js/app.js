@@ -16,11 +16,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngAnimate'])
         // Each state's controller can be found in controllers.js
         $stateProvider
             .state('info', {
-                url: '/info',
-                templateUrl: 'js/info/info-tmplt.html'
+                url: '/info/:company',
+                templateUrl: 'js/info/info-tmplt.html',
+                controller : "InfoCtrl"
+            })
+            .state('home', {
+                url: '/home',
+                templateUrl: 'js/home.tmplt.html'
             });
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/info');
+        $urlRouterProvider.otherwise('/home');
+    })
+    .controller("MainCtrl", function($scope, $state) {
+        $scope.backClick = function () {
+            $state.go("home");
+        };
     });
 
