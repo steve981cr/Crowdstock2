@@ -1,0 +1,5 @@
+<%= form_tag("/company/#{@company_id}/guess", method: "post") do %>
+  <%= label_tag(:q, "Guess") %>
+  <%= text_field_tag(:q) %>
+  <%= submit_tag("Submit") %>
+<% end %>
