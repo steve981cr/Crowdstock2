@@ -2,7 +2,7 @@ angular.module('starter.controllers', [])
 
 
 // A simple controller that fetches a list of data from a service
-    .controller('PECtrl', function ($scope) {
+    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub)  {
         $scope.model = {};
         $scope.model.isOpenComplete = true;
         $scope.$watch("isOpenComplete", function(n,o) {
@@ -10,6 +10,7 @@ angular.module('starter.controllers', [])
             $scope.model.isOpenComplete = n;
         });
 
+        $scope.model.estimate = "";
         $scope.PEHistoryOpts = {
             xaxis: {mode: "time"}
         };
@@ -18,6 +19,9 @@ angular.module('starter.controllers', [])
             PEVsDate: [],
             realtime: []
         };
+        $scope.model.data.crowdsourced = [];
+        $scope.model.data.crowdsourced_median = 0;
+
         var x = [];
         for (var i = 1; i < 31; i++) {
             var y = new Date();
@@ -30,9 +34,60 @@ angular.module('starter.controllers', [])
             $scope.model.visibility = !$scope.model.visibility;
         };
 
-        $scope.onsub = function() {
-            alert("ADD AN AJAX CALL!");
+        $scope.model.gaveEstimate = false;
+        $scope.onsub = function(estimate) {
+            $scope.model.estimate = estimate;
+            $scope.model.gaveEstimate = true;
+
+            PubNub.ngPublish({
+                channel: "capital_one",
+                message: {pe_estimate : estimate}
+            });
+            $http.post("/api/estimate", {company :$rootScope.company, metric : "PE", estimate : estimate })
+                .success(function(data, status, headers, config) {
+                    console.log("POSTed the estimate!");
+            }).
+                error(function(data, status, headers, config) {
+                    console.log("Error POSTing estimate");
+                });
         };
+
+       $scope.median = function(values) {
+           console.log(values);
+            values.sort( function(a,b) {return a - b;} );
+
+           console.log(values);
+
+            var half = Math.floor(values.length/2);
+
+            if(values.length % 2)
+                return values[half];
+            else
+                return (values[half-1] + values[half]) / 2.0;
+        }
+
+        $scope.median_graph_opts = {
+            bars: {
+                show: true
+            },
+            xaxis : {
+                ticks: [],
+                min: 0,
+                max: 1,
+                tickLength: 0
+            }
+        };
+
+        $scope.median_graph_data = [[0, 5]];
+        $rootScope.$on(PubNub.ngMsgEv("capital_one"), function(event, payload) {
+            $scope.model.data.crowdsourced.push(payload.message.pe_estimate);
+            $scope.model.data.crowdsourced_median = $scope.median($scope.model.data.crowdsourced);
+
+            $scope.median_graph_data.pop();
+            $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
+            $scope.$broadcast('regraph');
+        });
+
 })
     .controller("DummyCtrl", function($scope) {
         $scope.model = {};
@@ -46,13 +101,26 @@ angular.module('starter.controllers', [])
         $scope.toggleVisibility = function () {
             $scope.model.visibility = !$scope.model.visibility;
         };
+
+        $scope.onsub = function(){};
     })
-    .controller("InfoCtrl", function ($scope, $stateParams) {
+    .controller("InfoCtrl", function ($scope, $stateParams, $rootScope, PubNub) {
         $scope.header = {
             title : $stateParams.company
         };
+        $rootScope.company = $stateParams.company;
+
+        PubNub.init({publish_key:'pub-c-949916ba-5f2e-43d7-a0b8-0571045c5a4b',subscribe_key:'sub-c-dc3d71f2-1022-11e4-9fc1-02ee2ddab7fe',uuid:'an_optional_user_uuid'})
+
+        $scope.subscribe = function() {
+            PubNub.ngSubscribe({ channel: "capital_one" });
+                $rootScope.$on(PubNub.ngMsgEv("capital_one"), function(event, payload) {
+                });
+        };
+
+        $scope.subscribe();
     })
-    .controller('RevenueCtrl', function ($scope) {
+    .controller('RevenueCtrl', function ($scope, $http, $rootScope) {
         $scope.model = {};
         $scope.model.isOpenComplete = true;
         $scope.$watch("isOpenComplete", function(n,o) {
@@ -60,6 +128,7 @@ angular.module('starter.controllers', [])
             $scope.model.isOpenComplete = n;
         });
 
+        $scope.model.estimate = "";
         $scope.revQuarterlyOpts = {
             bars: {
                 show: true
@@ -92,8 +161,19 @@ angular.module('starter.controllers', [])
             $scope.model.visibility = !$scope.model.visibility;
         };
 
-        $scope.onsub = function() {
-            alert("ADD AN AJAX CALL!");
+        $scope.model.gaveEstimate = false;
+        $scope.onsub = function(estimate, slideBox) {
+            slideBox.$getByHandle('revenueScroller').slide(1);
+            $scope.model.estimate = estimate;
+            $scope.model.gaveEstimate = true;
+
+            $http.post("/api/estimate", {company :$rootScope.company, metric : "revenue", estimate : estimate })
+                .success(function(data, status, headers, config) {
+                    console.log("POSTed the estimate!");
+                }).
+                error(function(data, status, headers, config) {
+                    console.log("Error POSTing estimate");
+                });
         };
     })
     .controller('HomeCtrl', function ($scope, $state) {
@@ -104,7 +184,7 @@ angular.module('starter.controllers', [])
             $state.go('info', {company : comp});
         }
     })
-    .directive('estimateBtn', function () {
+    .directive('estimateBtn', function ($ionicPopup, $ionicSlideBoxDelegate) {
         return {
             restrict : "A",
             templateUrl: "js/estimate-btn.tmplt.html",
@@ -146,7 +226,21 @@ angular.module('starter.controllers', [])
                 };
 
                 sc.submit = function () {
-                    sc.onsub();
+                    sc.onsub(sc.data.entry, $ionicSlideBoxDelegate);
+
+                    var myPopup = $ionicPopup.show({
+                        template: '',
+                        title: 'Success!',
+                        subTitle: 'Your estimate has been recorded.',
+                        scope: sc,
+                        buttons: [
+                            {
+                                text: '<b>Continue</b>',
+                                type: 'button-positive'
+                            }
+                        ]
+                    });
+
                     sc.toggleView(false);
                 }
             }
@@ -163,14 +257,15 @@ angular.module('starter.controllers', [])
                 sc.$watch("visible", function (n, o) {
                     if (n == o) return;
                     if (!n) {
-                        $(el).slideUp(400, function () {
+                        $(el).slideUp(400);
+                        setTimeout(function() {
                             sc.$apply(function() {
                                 sc.open = false;
                             });
-                        });
+                        }, 300);
                     } else {
                         $(el).slideDown(400, function () {
-                            sc.$broadcast('hideEvt');
+                            sc.$broadcast('regraph');
                         });
                             sc.open = true;
                     }
@@ -196,9 +291,26 @@ angular.module('starter.controllers', [])
                 renderGraph();
 
 
-                sc.$on('hideEvt', function () {
+                sc.$on('regraph', function () {
                     renderGraph();
                 })
+            }
+        }
+    })
+    .directive("num", function() {
+        return {
+            restrict : "EA",
+            link : function(sc, el) {
+                $(el).keypress(function(ev){
+                    var keyCode = window.event ? ev.keyCode : ev.which;
+                    //codes for 0-9
+                    if (keyCode < 48 || keyCode > 57) {
+                        //codes for backspace, delete, enter
+                        if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+                            ev.preventDefault();
+                        }
+                    }
+                });
             }
         }
     });

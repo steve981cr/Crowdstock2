@@ -14,17 +14,43 @@
                 </div>
 
                 <div class="item details" slide="model.visibility" open="isOpenComplete">
-                    <ion-slide-box show-pager="false">
+                    <ion-slide-box show-pager="false" delegate-handle="revenueScroller">
                         <ion-slide>
                             <div class="graph-title">
                                 <span>Revenue per Quarter</span>
                                 <div graph="revQuarterlyOpts" model="model.data.revQuarterly"></div>
-
-                                <div graph model="model.data.revQuarterly"></div>
                             </div>
                         </ion-slide>
                         <ion-slide>
-                            More info...
+                            <div ng-show="model.gaveEstimate">
+                                <h2 class="tac underline">Estimates</h2>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tal" style="padding-top: 0;">
+                                        <h2>You:</h2>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tar" style="padding-top: 0;">
+                                        <h1 style="font-size: 30px;" ng-bind="model.estimate | currency">
+                                        </h1>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tal" style="padding-top: 0;">
+                                        <h2>Community:</h2>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0;">
+                                    <div class="col tar" style="padding-top: 0;">
+                                        <h1 style="font-size: 30px;">
+                                            $888 M
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="!model.gaveEstimate">
+                                <p class="normal">Please give your estimate to view the community says!</p>
+                            </div>
                         </ion-slide>
                     </ion-slide-box>
                 </div>
@@ -42,7 +68,7 @@
                     <h2 style="float: right;display: inline-block;">$17.03</h2>
                 </div>
             </div>
-            <div estimate-btn onsub="null"></div>
+            <div estimate-btn onsub="onsub"></div>
         </div>
 
         <div ng-controller="PECtrl">
@@ -59,17 +85,14 @@
                     <ion-slide-box show-pager="false">
                         <ion-slide>
                             <div class="graph-title">
-                                <span>P/E vs Date</span>
+                                <span>Realtime Community PE</span>
 
-                                <div graph="PEHistoryOpts" model="model.data.PEVsDate"></div>
+                                <div graph="median_graph_opts" model="median_graph_data"></div>
+
                             </div>
                         </ion-slide>
                         <ion-slide>
-                            <div class="graph-title">
-                                <span>Realtime Community P/E</span>
-
-                                <div graph model="model.data.realtime"></div>  #4a87ee
-                            </div>
+                            More ideas..?
                         </ion-slide>
                     </ion-slide-box>
                 </div>
@@ -87,7 +110,7 @@
                     <h2 style="float: right;display: inline-block;">$4.29</h2>
                 </div>
             </div>
-            <div estimate-btn onsub="null"></div>
+            <div estimate-btn onsub="onsub"></div>
         </div>
     </ion-content>
 </ion-view>

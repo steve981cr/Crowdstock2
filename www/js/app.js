@@ -6,7 +6,7 @@ window.addEventListener("load", function () {
     }, 0);
 });
 
-angular.module('starter', ['ionic', 'starter.controllers', 'ngAnimate'])
+angular.module('starter', ['ionic', 'starter.controllers', 'ngAnimate', 'pubnub.angular.service'])
 
     .config(function ($stateProvider, $urlRouterProvider) {
 
