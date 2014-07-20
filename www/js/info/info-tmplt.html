@@ -7,10 +7,8 @@
             <div class="list">
                 <div class="item">
                     <h2 style="display: inline-block;">P/E Ratio</h2>
-                    <span ng-click="toggleVisibility()" style="float:right;"
-                          ng-show="!visibility.PE">&nbsp;&#9660;</span>
-                    <span ng-click="toggleVisibility()" style="float:right;"
-                          ng-show="visibility.PE">&nbsp;&#9650;</span>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
 
                     <h2 style="float: right;display: inline-block;">18.34</h2>
                 </div>
@@ -34,9 +32,7 @@
                     </ion-slide-box>
                 </div>
             </div>
-            <button class="button button-positive" style="display: block;margin: auto;">
-                Give Estimate
-            </button>
+            <div estimate-btn></div>
         </div>
     </ion-content>
 </ion-view>

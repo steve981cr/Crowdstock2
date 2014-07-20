@@ -12,3 +12,8 @@
     height: 130px;
     min-height: 5px;
 }
+
+label.estimate {
+    width: 46%;
+    display: inline-block;
+}

@@ -2,7 +2,7 @@ angular.module('starter.controllers', [])
 
 
 // A simple controller that fetches a list of data from a service
-    .controller('PECtrl', function ($scope, PetService) {
+    .controller('PECtrl', function ($scope) {
         $scope.model = {};
 
         $scope.model.data = {
@@ -19,6 +19,51 @@ angular.module('starter.controllers', [])
         $scope.model.visibility = true;
         $scope.toggleVisibility = function () {
             $scope.model.visibility = !$scope.model.visibility;
+        }
+})
+    .directive('estimateBtn', function () {
+        return {
+            restrict : "A",
+            templateUrl: "js/estimate-btn.tmplt.html",
+            link : function (sc, el) {
+                sc.vis = {
+                    entry : false
+                };
+
+                sc.disabled = {
+                    giveEstimateBtn: false,
+                    cancelBtn: false
+                };
+
+                sc.data = {
+                    entry : ""
+                };
+
+                var btn = $($(el).find(".btn-row"));
+                var entry = $($(el).find(".entry-row"));
+
+                sc.toggleView = function (e) {
+                    if (e) {
+                        btn.toggle("slide", "left", function () {
+                            entry.toggle("slide", "right");
+                            sc.disabled.giveEstimateBtn = false;
+                        });
+                        sc.disabled.giveEstimateBtn = true;
+                    } else {
+                        entry.toggle("slide", "right", function() {
+                            btn.toggle("slide", "right");
+                            sc.disabled.cancelBtn = false;
+                        });
+                        sc.disabled.cancelBtn = true;
+                        sc.data.entry = "";
+                    }
+                };
+
+                sc.submit = function () {
+                    // TODO: AJAX CALL
+                    sc.toggleView(false);
+                }
+            }
         }
     })
     .directive('slide', function () {
@@ -51,7 +96,6 @@ angular.module('starter.controllers', [])
             link: function (sc, el) {
                 var $el = $($(el).find(".graph")[0]);
                 var renderGraph = function () {
-                    console.log('sam');
                     $.plot($el, [sc.model], {
                         xaxis: {mode: "time"}
                     });
