@@ -14,3 +14,13 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require_tree .
+estimate = {company: ,metric: ,estimate: }
+$.ajax({
+  type: "post",
+  url: "/company/0",
+  data: estimate
+});
+$.ajax({
+  type: "get",
+  url: "/company"
+});
