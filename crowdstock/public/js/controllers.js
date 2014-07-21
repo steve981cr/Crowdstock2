@@ -117,6 +117,10 @@ angular.module('starter.controllers', [])
                 min: 0,
                 max: 1,
                 tickLength: 0
+            },
+            yaxis : {
+                min: 0,
+                max: 50
             }
         };
 
@@ -152,7 +156,11 @@ angular.module('starter.controllers', [])
         };
         $rootScope.company = $stateParams.company;
 
-        PubNub.init({publish_key:'pub-c-949916ba-5f2e-43d7-a0b8-0571045c5a4b',subscribe_key:'sub-c-dc3d71f2-1022-11e4-9fc1-02ee2ddab7fe',uuid:'an_optional_user_uuid'})
+        PubNub.init({
+            publish_key:'pub-c-949916ba-5f2e-43d7-a0b8-0571045c5a4b',
+            subscribe_key:'sub-c-dc3d71f2-1022-11e4-9fc1-02ee2ddab7fe',
+            uuid:'an_optional_user_uuid'
+        })
 
         $scope.subscribe = function() {
             PubNub.ngSubscribe({ channel: "capital_one" });

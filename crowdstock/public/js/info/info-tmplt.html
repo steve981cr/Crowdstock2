@@ -10,7 +10,7 @@
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
 
-                    <h2 style="float: right;display: inline-block;">$5,468 M</h2>
+                    <h2 class="value">$5,468 M</h2>
                 </div>
 
                 <div class="item details" slide="model.visibility" open="isOpenComplete">
@@ -21,7 +21,7 @@
                                 <div graph="revQuarterlyOpts" model="model.data.revQuarterly"></div>
                             </div>
                         </ion-slide>
-                        <ion-slide>
+                        <ion-slide ng-class="{'estimate-only-tab' : !model.gaveEstimate}">
                             <div ng-show="model.gaveEstimate">
                                 <h2 class="tac underline">Estimates</h2>
                                 <div class="row" style="padding-top: 0;">
@@ -31,7 +31,8 @@
                                 </div>
                                 <div class="row" style="padding-top: 0;">
                                     <div class="col tar" style="padding-top: 0;">
-                                        <h1 style="font-size: 30px;" ng-bind="model.estimate | currency">
+                                        <h1 style="font-size: 30px;">
+                                            ${{model.estimate | number}} M
                                         </h1>
                                     </div>
                                 </div>
@@ -49,7 +50,7 @@
                                 </div>
                             </div>
                             <div ng-show="!model.gaveEstimate">
-                                <p class="normal">Please give your estimate to view the community says!</p>
+                                <h2 class="normal tac">Please give your estimate to view what the community says!</h2>
                             </div>
                         </ion-slide>
                     </ion-slide-box>
@@ -65,10 +66,10 @@
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
 
-                    <h2 style="float: right;display: inline-block;">$7.15</h2>
+                    <h2 class="value">$7.15</h2>
                 </div>
             </div>
-            <div estimate-btn onsub="onsub"></div>
+            <div estimate-btn onsub="onsub" txt="Give Estimate (Next Quarter)"></div>
         </div>
 
         <div ng-controller="PECtrl">
@@ -78,7 +79,7 @@
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
 
-                    <h2 style="float: right;display: inline-block;">{{model.data.crowdsourced_actual}}</h2>
+                    <h2 class="value">{{model.data.crowdsourced_actual}}</h2>
                 </div>
 
                 <div class="item details" slide="model.visibility" open="isOpenComplete">
@@ -89,23 +90,23 @@
                                 <div graph="dummy.dummy_graph_opts" model="dummy.dummy_graph"></div>
                             </div>
                         </ion-slide>
-                        <ion-slide>
+                        <ion-slide ng-class="{'estimate-only-tab' : !model.gaveEstimate}">
                             <div ng-show="model.gaveEstimate">
                                 <div class="graph-title">
-                                    <span>Realtime Community PE</span>
+                                    <span>Realtime Community P/E</span>
 
                                     <div graph="median_graph_opts" model="median_graph_data"></div>
 
                                 </div>
                             </div>
                             <div ng-show="!model.gaveEstimate">
-                                <p class="normal">Please give your estimate to view the community says!</p>
+                                <h2 class="normal tac">Please give your estimate to view what the community says!</h2>
                             </div>
                         </ion-slide>
                     </ion-slide-box>
                 </div>
             </div>
-            <div estimate-btn onsub="onsub"></div>
+            <div estimate-btn onsub="onsub" txt="Give Estimate (Now)"></div>
         </div>
 
         <div ng-controller="DummyCtrl">
@@ -115,10 +116,10 @@
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
                     <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
 
-                    <h2 style="float: right;display: inline-block;">$82.29</h2>
+                    <h2 class="value">$82.29</h2>
                 </div>
             </div>
-            <div estimate-btn onsub="onsub"></div>
+            <div estimate-btn onsub="onsub" txt="Give Estimate (Now)"></div>
         </div>
     </ion-content>
 </ion-view>
