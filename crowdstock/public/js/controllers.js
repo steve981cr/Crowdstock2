@@ -1,29 +1,29 @@
 angular.module('starter.controllers', [])
-    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub)  {
+    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub) {
         $scope.details = {
-            visible : false,
-            completelyOpen : false,
-            onopen : function () {
+            visible: false,
+            completelyOpen: false,
+            onopen: function () {
                 $scope.details.visible = true;
                 $scope.graphs.regraph = true;
             },
-            onclose : function () {
+            onclose: function () {
                 $scope.details.visible = false;
             }
         };
 
         $scope.data = {
-            userEstimate : -1,
-            crowdsourcedPts : [],
-            crowdsourced : 0,
+            userEstimate: -1,
+            crowdsourcedPts: [],
+            crowdsourced: 0,
             actual: 0
         };
 
         $scope.graphs = {
-            PEvsDate : [
-                [11,11.42],
-                [10,11.36],
-                [9,10.85],
+            PEvsDate: [
+                [11, 11.42],
+                [10, 11.36],
+                [9, 10.85],
                 [8, 10.44],
                 [7, 10.90],
                 [6, 10.37],
@@ -34,34 +34,40 @@ angular.module('starter.controllers', [])
                 [1, 10.01],
                 [0, 9.40]
             ],
-            PEvsDateOpts : {
+            PEvsDateOpts: {
                 series: {
                     lines: {
                         show: true
                     }
                 },
                 xaxis: {
-                    ticks: [[0,"Aug"],[2,"Oct"],[4,"Dec13"],[6,"Feb"], [8, "Apr"], [10, "Jun"]],
+                    ticks: [
+                        [0, "Aug"],
+                        [2, "Oct"],
+                        [4, "Dec13"],
+                        [6, "Feb"],
+                        [8, "Apr"],
+                        [10, "Jun"]
+                    ],
                     tickLength: 0
                 }
             },
-            crowdsourced : [],
-            crowdsourcedOpts : {
+            crowdsourced: [],
+            crowdsourcedOpts: {
                 bars: {
                     show: true
-                }
-                ,
-                xaxis : {
+                },
+                xaxis: {
                     ticks: [],
                     min: 0,
                     max: 1
                 },
-                yaxis : {
+                yaxis: {
                     min: 0,
                     max: 50
                 }
             },
-            regraph : false
+            regraph: false
         };
         $scope.graphs.PEvsDate.reverse();
 
@@ -87,18 +93,20 @@ angular.module('starter.controllers', [])
             }
         );
 
-        var median = function(values) {
+        var median = function (values) {
             for (var i = 0; i < values.length; i++)
                 values[i] = parseInt(values[i]);
 
-            values.sort( function(a,b) {return a - b;} );
+            values.sort(function (a, b) {
+                return a - b;
+            });
 
-            var half = Math.floor(values.length/2);
+            var half = Math.floor(values.length / 2);
 
-            if(values.length % 2)
+            if (values.length % 2)
                 return values[half];
             else
-                return (values[half-1] + values[half]) / 2.0;
+                return (values[half - 1] + values[half]) / 2.0;
         };
 
         $scope.demo = function () {
@@ -107,13 +115,13 @@ angular.module('starter.controllers', [])
                     var ran = Math.floor(Math.random() * 50) + 1;
                     PubNub.ngPublish({
                         channel: "capital_one",
-                        message: {pe_estimate : ran}
+                        message: {pe_estimate: ran}
                     });
                 }, 200 * i);
             }
         };
 
-        $scope.onsub = function(estimate, slideBox) {
+        $scope.onsub = function (estimate, slideBox) {
             $scope.graphs.regraph = true;
             slideBox.$getByHandle('peScroller').slide(1);
 
@@ -121,35 +129,35 @@ angular.module('starter.controllers', [])
 
             PubNub.ngPublish({
                 channel: "capital_one",
-                message: {pe_estimate : estimate}
+                message: {pe_estimate: estimate}
             });
 
-            $http.post("/company/0/guess", {company :$rootScope.company, metric : "PE", estimate : estimate })
-                .success(function(data, status, headers, config) {
+            $http.post("/company/0/guess", {company: $rootScope.company, metric: "PE", estimate: estimate })
+                .success(function (data, status, headers, config) {
                     console.log("POSTed the estimate!");
-            }).
-                error(function(data, status, headers, config) {
+                }).
+                error(function (data, status, headers, config) {
                     console.log("Error POSTing estimate");
                 });
         };
 
-        $rootScope.$on(PubNub.ngMsgEv("capital_one"), function(event, payload) {
+        $rootScope.$on(PubNub.ngMsgEv("capital_one"), function (event, payload) {
             $scope.data.crowdsourcedPts.push(payload.message.pe_estimate);
             $scope.data.crowdsourced = median($scope.data.crowdsourcedPts);
 
             $scope.graphs.crowdsourced.pop();
             $scope.graphs.crowdsourced.push([0, $scope.data.crowdsourced]);
 
-            $scope.$apply(function() {
+            $scope.$apply(function () {
                 $scope.details.onopen();
             });
 
         });
-})
-    .controller("DummyCtrl", function($scope) {
+    })
+    .controller("DummyCtrl", function ($scope) {
         $scope.model = {};
         $scope.model.isOpenComplete = false;
-        $scope.$watch("isOpenComplete", function(n,o) {
+        $scope.$watch("isOpenComplete", function (n, o) {
             if (n == o) return;
             $scope.model.isOpenComplete = n;
         });
@@ -158,40 +166,41 @@ angular.module('starter.controllers', [])
         $scope.toggleVisibility = function () {
         };
 
-        $scope.onsub = function(){};
+        $scope.onsub = function () {
+        };
     })
     .controller("InfoCtrl", function ($http, $scope, $stateParams, $rootScope, PubNub) {
         $scope.header = {
-            title : $stateParams.company
+            title: $stateParams.company
         };
         $rootScope.company = $stateParams.company;
 
         PubNub.init({
-            publish_key:'pub-c-949916ba-5f2e-43d7-a0b8-0571045c5a4b',
-            subscribe_key:'sub-c-dc3d71f2-1022-11e4-9fc1-02ee2ddab7fe',
-            uuid:'an_optional_user_uuid'
+            publish_key: 'pub-c-949916ba-5f2e-43d7-a0b8-0571045c5a4b',
+            subscribe_key: 'sub-c-dc3d71f2-1022-11e4-9fc1-02ee2ddab7fe',
+            uuid: 'an_optional_user_uuid'
         });
 
         if ($rootScope.pe_data == undefined)
-        $http.get("/company/0?company=" + $rootScope.company )
-            .success(function(data, status, headers, config) {
-                $rootScope.pe_data = {
-                    actual_pe : data.actual, guess_pe : data.guess
-                };
-            }).
-            error(function(data, status, headers, config) {
-                console.log("Error!");
-            });
+            $http.get("/company/0?company=" + $rootScope.company)
+                .success(function (data, status, headers, config) {
+                    $rootScope.pe_data = {
+                        actual_pe: data.actual, guess_pe: data.guess
+                    };
+                }).
+                error(function (data, status, headers, config) {
+                    console.log("Error!");
+                });
     })
     .controller('RevenueCtrl', function ($scope, $http, $rootScope) {
         $scope.details = {
-            visible : false,
-            completelyOpen : false,
-            onopen : function () {
+            visible: false,
+            completelyOpen: false,
+            onopen: function () {
                 $scope.details.visible = true;
                 $scope.graphs.regraph = true;
             },
-            onclose : function () {
+            onclose: function () {
                 $scope.details.visible = false;
             }
         };
@@ -228,8 +237,8 @@ angular.module('starter.controllers', [])
         };
 
         $scope.data = {
-            userEstimate : -1,
-            crowdsourced : 0,
+            userEstimate: -1,
+            crowdsourced: 0,
             actual: 0
         };
 
@@ -237,15 +246,15 @@ angular.module('starter.controllers', [])
             return $scope.data.userEstimate != -1;
         };
 
-        $scope.onsub = function(estimate, slideBox) {
+        $scope.onsub = function (estimate, slideBox) {
             slideBox.$getByHandle('revenueScroller').slide(1);
             $scope.data.userEstimate = estimate;
 
-            $http.post("/company/0/guess", {company :$rootScope.company, metric : "revenue", estimate : estimate })
-                .success(function(data, status, headers, config) {
+            $http.post("/company/0/guess", {company: $rootScope.company, metric: "revenue", estimate: estimate })
+                .success(function (data, status, headers, config) {
                     console.log("POSTed the estimate!");
                 }).
-                error(function(data, status, headers, config) {
+                error(function (data, status, headers, config) {
                     console.log("Error POSTing estimate");
                 });
         };
@@ -253,42 +262,42 @@ angular.module('starter.controllers', [])
     .controller('HomeCtrl', function ($scope, $state, $http, $rootScope) {
         $scope.companies = [];
         $http.get("/company")
-            .success(function(data, status, headers, config) {
+            .success(function (data, status, headers, config) {
                 $scope.companies = data.companies;
                 console.log("GET the estimate!");
             }).
-            error(function(data, status, headers, config) {
+            error(function (data, status, headers, config) {
                 console.log("Error GET estimate");
             });
 
         $scope.selectCompany = function (comp) {
-            $http.get("/company/0?company=" + comp )
-                .success(function(data, status, headers, config) {
+            $http.get("/company/0?company=" + comp)
+                .success(function (data, status, headers, config) {
                     $rootScope.pe_data = {
-                        actual_pe : data.actual, guess_pe : data.guess
+                        actual_pe: data.actual, guess_pe: data.guess
                     };
 
-                    $state.go('info', {company : comp });
+                    $state.go('info', {company: comp });
                     console.log("POST!");
                 }).
-                error(function(data, status, headers, config) {
+                error(function (data, status, headers, config) {
                     console.log("Error!");
                 });
         }
     })
     .directive('estimateBtn', function ($ionicPopup, $ionicSlideBoxDelegate) {
         return {
-            restrict : "A",
+            restrict: "A",
             templateUrl: "js/estimate-btn.tmplt.html",
-            scope : {
-                onsub : "=",
-                txt : "@"
+            scope: {
+                onsub: "=",
+                txt: "@"
             },
-            link : function (sc, el) {
+            link: function (sc, el) {
                 sc.myText = sc.txt || "Give Estimate";
 
                 sc.vis = {
-                    entry : false
+                    entry: false
                 };
 
                 sc.disabled = {
@@ -297,7 +306,7 @@ angular.module('starter.controllers', [])
                 };
 
                 sc.data = {
-                    entry : ""
+                    entry: ""
                 };
 
                 var btn = $($(el).find(".btn-row"));
@@ -311,7 +320,7 @@ angular.module('starter.controllers', [])
                         });
                         sc.disabled.giveEstimateBtn = true;
                     } else {
-                        entry.toggle("slide", "right", function() {
+                        entry.toggle("slide", "right", function () {
                             btn.toggle("slide", "right");
                             sc.disabled.cancelBtn = false;
                         });
@@ -346,20 +355,22 @@ angular.module('starter.controllers', [])
             restrict: "A",
             scope: {
                 "visible": "=slide",
-                "open" : "=",
-                "onclose" : "&",
-                "onopen" : "&"
+                "open": "=",
+                "onclose": "&",
+                "onopen": "&"
             },
             link: function (sc, el) {
-                sc.onopen = sc.onopen() || function(){};
-                sc.onclose = sc.onclose() || function(){};
+                sc.onopen = sc.onopen() || function () {
+                };
+                sc.onclose = sc.onclose() || function () {
+                };
 
                 sc.$watch("visible", function (n, o) {
                     if (n == o) return;
                     if (!n) {
                         $(el).slideUp(400);
-                        setTimeout(function() {
-                            sc.$apply(function() {
+                        setTimeout(function () {
+                            sc.$apply(function () {
                                 sc.open = false;
                                 sc.onclose();
                             });
@@ -371,7 +382,7 @@ angular.module('starter.controllers', [])
                                 $ionicSlideBoxDelegate.update();
                             });
                         });
-                            sc.open = true;
+                        sc.open = true;
                     }
                 });
             }
@@ -381,9 +392,9 @@ angular.module('starter.controllers', [])
         return {
             restrict: "EA",
             scope: {
-                "opts" : "=graph",
+                "opts": "=graph",
                 "model": "=",
-                "regraph" : "="
+                "regraph": "="
             },
             templateUrl: 'js/graph.tmplt.html',
             link: function (sc, el) {
@@ -408,11 +419,11 @@ angular.module('starter.controllers', [])
             }
         }
     })
-    .directive("num", function() {
+    .directive("num", function () {
         return {
-            restrict : "EA",
-            link : function(sc, el) {
-                $(el).keypress(function(ev){
+            restrict: "EA",
+            link: function (sc, el) {
+                $(el).keypress(function (ev) {
                     var keyCode = window.event ? ev.keyCode : ev.which;
                     //codes for 0-9
                     if (keyCode < 48 || keyCode > 57 || keyCode == 110 || keyCode == 46) {

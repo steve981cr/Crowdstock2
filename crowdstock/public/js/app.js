@@ -18,7 +18,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngAnimate', 'pubnub.
             .state('info', {
                 url: '/info/:company',
                 templateUrl: 'js/info/info-tmplt.html',
-                controller : "InfoCtrl"
+                controller: "InfoCtrl"
             })
             .state('home', {
                 url: '/home',
@@ -28,7 +28,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngAnimate', 'pubnub.
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/home');
     })
-    .controller("MainCtrl", function($scope, $state) {
+    .controller("MainCtrl", function ($scope, $state) {
         $scope.backClick = function () {
             $state.go("home");
         };

@@ -7,10 +7,10 @@
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 25px !important;
     border-bottom-left-radius: 25px !important;
-    display:none
+    display: none
 }
 
-.item.activated{
+.item.activated {
     background-color: skyblue;
 }
 
@@ -83,7 +83,7 @@ div.rounded {
     text-align: left;
 }
 
-.tar{
+.tar {
     text-align: right;
 }
 
