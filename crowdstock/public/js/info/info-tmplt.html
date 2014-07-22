@@ -5,20 +5,20 @@
     <ion-content padding="true">
         <div ng-controller="RevenueCtrl">
             <div class="list head">
-                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
+                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}" ng-click="toggleVisibility()">
                     <h2 style="display: inline-block;">Q2 Revenue</h2>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+                    <span style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
 
                     <h2 class="value">$5,468 M</h2>
                 </div>
 
-                <div class="item details" slide="model.visibility" open="isOpenComplete">
+                <div class="item details" slide="model.visibility" open="isOpenComplete" onopen="onopen" onclose="onclose">
                     <ion-slide-box show-pager="false" delegate-handle="revenueScroller">
                         <ion-slide>
                             <div class="graph-title">
                                 <span>Revenue per Quarter</span>
-                                <div graph="revQuarterlyOpts" model="model.data.revQuarterly"></div>
+                                <div graph="revQuarterlyOpts" model="model.data.revQuarterly" regraph="regraph"></div>
                             </div>
                         </ion-slide>
                         <ion-slide ng-class="{'estimate-only-tab' : !model.gaveEstimate}">
@@ -82,21 +82,20 @@
                     <h2 class="value">{{model.data.crowdsourced_actual}}</h2>
                 </div>
 
-                <div class="item details" slide="model.visibility" open="isOpenComplete">
+                <div class="item details" slide="model.visibility" open="isOpenComplete" onopen="onopen" onclose="onclose">
                     <ion-slide-box show-pager="false" delegate-handle="peScroller">
                         <ion-slide>
                             <div class="graph-title">
                                 <span>P/E History</span>
-                                <div graph="dummy.dummy_graph_opts" model="dummy.dummy_graph"></div>
+                                <div graph="dummy.dummy_graph_opts" model="dummy.dummy_graph" regraph="x.regraph"></div>
                             </div>
                         </ion-slide>
                         <ion-slide ng-class="{'estimate-only-tab' : !model.gaveEstimate}">
                             <div ng-show="model.gaveEstimate">
                                 <div class="graph-title">
                                     <span>Realtime Community P/E</span>
-
-                                    <div graph="median_graph_opts" model="median_graph_data"></div>
-
+                                    <input type="button" value="d" ng-click="demo()" />
+                                    <div graph="median_graph_opts" model="median_graph_data" regraph="x.regraph"></div>
                                 </div>
                             </div>
                             <div ng-show="!model.gaveEstimate">

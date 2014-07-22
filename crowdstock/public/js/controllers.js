@@ -2,13 +2,14 @@ angular.module('starter.controllers', [])
 
 
 // A simple controller that fetches a list of data from a service
-    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub)  {
+    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub, $timeout)  {
+        $scope.x = {};
         $scope.model = {};
         $scope.model.data = {
             PEVsDate: [],
             realtime: []
         };
-        $scope.model.isOpenComplete = true;
+        $scope.model.isOpenComplete = false;
         $scope.$watch("isOpenComplete", function(n,o) {
             if (n == o) return;
             $scope.model.isOpenComplete = n;
@@ -25,7 +26,10 @@ angular.module('starter.controllers', [])
 
             $scope.median_graph_data.pop();
             $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
-            $scope.$broadcast('regraph');
+
+            console.log($scope.x.regraph);
+            $scope.x.regraph = true;
+            console.log($scope.x.regraph);
         });
 
         $scope.model.estimate = "";
@@ -43,7 +47,7 @@ angular.module('starter.controllers', [])
             $scope.model.data.PEVsDate.push([y.getTime(), i]);
         }
 
-        $scope.model.visibility = true;
+        $scope.model.visibility = false;
         $scope.toggleVisibility = function () {
             $scope.model.visibility = !$scope.model.visibility;
         };
@@ -74,8 +78,21 @@ angular.module('starter.controllers', [])
         ];
         $scope.dummy.dummy_graph.reverse();
 
+        $scope.demo = function () {
+            for (var i = 0; i < 50; i++) {
+                setTimeout(function () {
+                    var ran = Math.floor(Math.random() * 50) + 1;
+                    PubNub.ngPublish({
+                        channel: "capital_one",
+                        message: {pe_estimate : ran}
+                    });
+                }, 200 * i);
+            }
+        };
+
         $scope.model.gaveEstimate = false;
         $scope.onsub = function(estimate,slideBox) {
+            $scope.x.regraph = true;
             slideBox.$getByHandle('peScroller').slide(1);
 
             $scope.model.estimate = estimate;
@@ -111,12 +128,12 @@ angular.module('starter.controllers', [])
         $scope.median_graph_opts = {
             bars: {
                 show: true
-            },
+            }
+            ,
             xaxis : {
                 ticks: [],
                 min: 0,
-                max: 1,
-                tickLength: 0
+                max: 1
             },
             yaxis : {
                 min: 0,
@@ -131,9 +148,20 @@ angular.module('starter.controllers', [])
 
             $scope.median_graph_data.pop();
             $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
-            $scope.$broadcast('regraph');
+
+            $scope.$apply(function() {
+                $scope.onopen();
+            });
+
         });
 
+        $scope.x.regraph = false;
+        $scope.onopen = function(){
+            $scope.x.regraph = true;
+        };
+        $scope.onclose = function () {
+            $scope.x.regraph = false;
+        }
 })
     .controller("DummyCtrl", function($scope) {
         $scope.model = {};
@@ -145,7 +173,6 @@ angular.module('starter.controllers', [])
 
         $scope.model.visibility = false;
         $scope.toggleVisibility = function () {
-            $scope.model.visibility = !$scope.model.visibility;
         };
 
         $scope.onsub = function(){};
@@ -182,7 +209,7 @@ angular.module('starter.controllers', [])
     })
     .controller('RevenueCtrl', function ($scope, $http, $rootScope) {
         $scope.model = {};
-        $scope.model.isOpenComplete = true;
+        $scope.model.isOpenComplete = false;
         $scope.$watch("isOpenComplete", function(n,o) {
             if (n == o) return;
             $scope.model.isOpenComplete = n;
@@ -218,7 +245,7 @@ angular.module('starter.controllers', [])
             [3, 5468]
         ];
 
-        $scope.model.visibility = true;
+        $scope.model.visibility = false;
         $scope.toggleVisibility = function () {
             $scope.model.visibility = !$scope.model.visibility;
         };
@@ -237,6 +264,14 @@ angular.module('starter.controllers', [])
                     console.log("Error POSTing estimate");
                 });
         };
+
+        $scope.regraph = false;
+        $scope.onopen = function(){
+            $scope.regraph = true;
+        };
+        $scope.onclose = function () {
+            $scope.regraph = false;
+        }
     })
     .controller('HomeCtrl', function ($scope, $state, $http, $rootScope) {
         //TODO: Replace with AJAX
@@ -331,14 +366,19 @@ angular.module('starter.controllers', [])
             }
         }
     })
-    .directive('slide', function () {
+    .directive('slide', function ($ionicSlideBoxDelegate) {
         return {
             restrict: "A",
             scope: {
                 "visible": "=slide",
-                "open" : "="
+                "open" : "=",
+                "onclose" : "&",
+                "onopen" : "&"
             },
             link: function (sc, el) {
+                sc.onopen = sc.onopen() || function(){};
+                sc.onclose = sc.onclose() || function(){};
+
                 sc.$watch("visible", function (n, o) {
                     if (n == o) return;
                     if (!n) {
@@ -346,11 +386,15 @@ angular.module('starter.controllers', [])
                         setTimeout(function() {
                             sc.$apply(function() {
                                 sc.open = false;
+                                sc.onclose();
                             });
                         }, 300);
                     } else {
                         $(el).slideDown(400, function () {
-                            sc.$broadcast('regraph');
+                            sc.$apply(function () {
+                                sc.onopen();
+                                $ionicSlideBoxDelegate.update();
+                            });
                         });
                             sc.open = true;
                     }
@@ -358,12 +402,13 @@ angular.module('starter.controllers', [])
             }
         }
     })
-    .directive('graph', function () {
+    .directive('graph', function ($rootScope, $timeout) {
         return {
             restrict: "EA",
             scope: {
                 "opts" : "=graph",
-                "model": "="
+                "model": "=",
+                "regraph" : "="
             },
             templateUrl: 'js/graph.tmplt.html',
             link: function (sc, el) {
@@ -371,14 +416,20 @@ angular.module('starter.controllers', [])
                 var $el = $($(el).find(".graph")[0]);
                 var renderGraph = function () {
                     opts.data = sc.model;
-                    $.plot($el, [opts], opts);
+                    if ($el.width() > 0 && $el.height() > 0)
+                        $.plot($el, [opts], opts);
                 };
                 renderGraph();
 
-
-                sc.$on('regraph', function () {
+                var re = function () {
+                    $el.width($el.parents(".slider").width() - 10);
                     renderGraph();
-                })
+                    sc.regraph = false;
+                };
+
+                sc.$watch("regraph", function (n, o) {
+                    if (n) re();
+                });
             }
         }
     })

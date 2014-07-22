@@ -7,16 +7,26 @@
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 25px !important;
     border-bottom-left-radius: 25px !important;
+    display:none
+}
+
+.item.activated{
+    background-color: skyblue;
 }
 
 .graph-title {
     text-align: center;
 }
 
+.item.details .graph {
+    width: 0;
+}
+
 .graph {
     width: 95%;
     height: 130px;
     min-height: 5px;
+    float: right;
 }
 
 label.estimate {
