@@ -17,7 +17,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngAnimate', 'pubnub.
         $stateProvider
             .state('info', {
                 url: '/info/:company',
-                templateUrl: 'js/info/info-tmplt.html',
+                templateUrl: 'js/info-tmplt.html',
                 controller: "InfoCtrl"
             })
             .state('home', {
