@@ -1,82 +1,105 @@
 angular.module('starter.controllers', [])
-
-
-// A simple controller that fetches a list of data from a service
-    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub, $timeout)  {
-        $scope.x = {};
-        $scope.model = {};
-        $scope.model.data = {
-            PEVsDate: [],
-            realtime: []
-        };
-        $scope.model.isOpenComplete = false;
-        $scope.$watch("isOpenComplete", function(n,o) {
-            if (n == o) return;
-            $scope.model.isOpenComplete = n;
-        });
-
-        $scope.model.data.crowdsourced_actual = "";
-        $scope.$watch(function () {return $rootScope.pe_data; }, function (n, o) {
-            if (n == undefined) return;
-            $scope.model.data.crowdsourced_median = n.guess_pe;
-            $scope.model.data.crowdsourced_actual = n.actual_pe;
-
-            $scope.median_graph_data.pop();
-            $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
-
-            $scope.median_graph_data.pop();
-            $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
-
-            console.log($scope.x.regraph);
-            $scope.x.regraph = true;
-            console.log($scope.x.regraph);
-        });
-
-        $scope.model.estimate = "";
-        $scope.PEHistoryOpts = {
-            xaxis: {mode: "time"}
-        };
-
-        $scope.model.data.crowdsourced = [];
-        $scope.model.data.crowdsourced_median = 0;
-
-        var x = [];
-        for (var i = 1; i < 31; i++) {
-            var y = new Date();
-            y.setDate(y.getDate() + i);
-            $scope.model.data.PEVsDate.push([y.getTime(), i]);
-        }
-
-        $scope.model.visibility = false;
-        $scope.toggleVisibility = function () {
-            $scope.model.visibility = !$scope.model.visibility;
-        };
-
-        $scope.dummy = {};
-        $scope.dummy.dummy_graph_opts = {
-            series: {
-                lines: { show: true }
+    .controller('PECtrl', function ($scope, $http, $rootScope, PubNub)  {
+        $scope.details = {
+            visible : false,
+            completelyOpen : false,
+            onopen : function () {
+                $scope.details.visible = true;
+                $scope.graphs.regraph = true;
             },
-            xaxis: {
-                ticks: [[0,"Aug"],[2,"Oct"],[4,"Dec13"],[6,"Feb"], [8, "Apr"], [10, "Jun"]],
-                tickLength: 0
+            onclose : function () {
+                $scope.details.visible = false;
             }
         };
-        $scope.dummy.dummy_graph = [
-            [11,11.42],
-            [10,11.36],
-            [9,10.85],
-            [8, 10.44],
-            [7, 10.90],
-            [6, 10.37],
-            [5, 10.25],
-            [4, 11.12],
-            [3, 10.40],
-            [2, 10.00],
-            [1, 10.01],
-            [0, 9.40]
-        ];
-        $scope.dummy.dummy_graph.reverse();
+
+        $scope.data = {
+            userEstimate : -1,
+            crowdsourcedPts : [],
+            crowdsourced : 0,
+            actual: 0
+        };
+
+        $scope.graphs = {
+            PEvsDate : [
+                [11,11.42],
+                [10,11.36],
+                [9,10.85],
+                [8, 10.44],
+                [7, 10.90],
+                [6, 10.37],
+                [5, 10.25],
+                [4, 11.12],
+                [3, 10.40],
+                [2, 10.00],
+                [1, 10.01],
+                [0, 9.40]
+            ],
+            PEvsDateOpts : {
+                series: {
+                    lines: {
+                        show: true
+                    }
+                },
+                xaxis: {
+                    ticks: [[0,"Aug"],[2,"Oct"],[4,"Dec13"],[6,"Feb"], [8, "Apr"], [10, "Jun"]],
+                    tickLength: 0
+                }
+            },
+            crowdsourced : [],
+            crowdsourcedOpts : {
+                bars: {
+                    show: true
+                }
+                ,
+                xaxis : {
+                    ticks: [],
+                    min: 0,
+                    max: 1
+                },
+                yaxis : {
+                    min: 0,
+                    max: 50
+                }
+            },
+            regraph : false
+        };
+        $scope.graphs.PEvsDate.reverse();
+
+        $scope.gaveEstimate = function () {
+            return $scope.data.userEstimate != -1;
+        };
+
+        $scope.$watch(
+            function () {
+                return $rootScope.pe_data;
+            },
+            function (n, o) {
+                if (n == undefined) return;
+                $scope.data.crowdsourced = n.guess_pe;
+                $scope.data.actual = n.actual_pe;
+
+                $scope.data.crowdsourcedPts.push(n.guess_pe);
+
+                $scope.graphs.crowdsourced.pop();
+                $scope.graphs.crowdsourced.push([0, n.guess_pe]);
+
+                $scope.graphs.regraph = true;
+            }
+        );
+
+        var median = function(values) {
+            for (var i = 0; i < values.length; i++)
+                values[i] = parseInt(values[i]);
+
+            values.sort( function(a,b) {return a - b;} );
+
+            var half = Math.floor(values.length/2);
+
+            if(values.length % 2)
+                return values[half];
+            else
+                return (values[half-1] + values[half]) / 2.0;
+        };
 
         $scope.demo = function () {
             for (var i = 0; i < 50; i++) {
@@ -90,18 +113,17 @@ angular.module('starter.controllers', [])
             }
         };
 
-        $scope.model.gaveEstimate = false;
-        $scope.onsub = function(estimate,slideBox) {
-            $scope.x.regraph = true;
+        $scope.onsub = function(estimate, slideBox) {
+            $scope.graphs.regraph = true;
             slideBox.$getByHandle('peScroller').slide(1);
 
-            $scope.model.estimate = estimate;
-            $scope.model.gaveEstimate = true;
+            $scope.data.userEstimate = estimate;
 
             PubNub.ngPublish({
                 channel: "capital_one",
                 message: {pe_estimate : estimate}
             });
+
             $http.post("/company/0/guess", {company :$rootScope.company, metric : "PE", estimate : estimate })
                 .success(function(data, status, headers, config) {
                     console.log("POSTed the estimate!");
@@ -111,57 +133,18 @@ angular.module('starter.controllers', [])
                 });
         };
 
-       $scope.median = function(values) {
-           for (var i = 0; i < values.length; i++)
-                values[i] = parseInt(values[i]);
-
-            values.sort( function(a,b) {return a - b;} );
-
-            var half = Math.floor(values.length/2);
-
-            if(values.length % 2)
-                return values[half];
-            else
-                return (values[half-1] + values[half]) / 2.0;
-        };
-
-        $scope.median_graph_opts = {
-            bars: {
-                show: true
-            }
-            ,
-            xaxis : {
-                ticks: [],
-                min: 0,
-                max: 1
-            },
-            yaxis : {
-                min: 0,
-                max: 50
-            }
-        };
-
-        $scope.median_graph_data = [[0, 5]];
         $rootScope.$on(PubNub.ngMsgEv("capital_one"), function(event, payload) {
-            $scope.model.data.crowdsourced.push(payload.message.pe_estimate);
-            $scope.model.data.crowdsourced_median = $scope.median($scope.model.data.crowdsourced);
+            $scope.data.crowdsourcedPts.push(payload.message.pe_estimate);
+            $scope.data.crowdsourced = median($scope.data.crowdsourcedPts);
 
-            $scope.median_graph_data.pop();
-            $scope.median_graph_data.push([0, $scope.model.data.crowdsourced_median]);
+            $scope.graphs.crowdsourced.pop();
+            $scope.graphs.crowdsourced.push([0, $scope.data.crowdsourced]);
 
             $scope.$apply(function() {
-                $scope.onopen();
+                $scope.details.onopen();
             });
 
         });
-
-        $scope.x.regraph = false;
-        $scope.onopen = function(){
-            $scope.x.regraph = true;
-        };
-        $scope.onclose = function () {
-            $scope.x.regraph = false;
-        }
 })
     .controller("DummyCtrl", function($scope) {
         $scope.model = {};
@@ -187,14 +170,9 @@ angular.module('starter.controllers', [])
             publish_key:'pub-c-949916ba-5f2e-43d7-a0b8-0571045c5a4b',
             subscribe_key:'sub-c-dc3d71f2-1022-11e4-9fc1-02ee2ddab7fe',
             uuid:'an_optional_user_uuid'
-        })
+        });
 
-        $scope.subscribe = function() {
-            PubNub.ngSubscribe({ channel: "capital_one" });
-                $rootScope.$on(PubNub.ngMsgEv("capital_one"), function(event, payload) {
-                });
-        };
-
+        if ($rootScope.pe_data == undefined)
         $http.get("/company/0?company=" + $rootScope.company )
             .success(function(data, status, headers, config) {
                 $rootScope.pe_data = {
@@ -204,59 +182,66 @@ angular.module('starter.controllers', [])
             error(function(data, status, headers, config) {
                 console.log("Error!");
             });
-
-        $scope.subscribe();
     })
     .controller('RevenueCtrl', function ($scope, $http, $rootScope) {
-        $scope.model = {};
-        $scope.model.isOpenComplete = false;
-        $scope.$watch("isOpenComplete", function(n,o) {
-            if (n == o) return;
-            $scope.model.isOpenComplete = n;
-        });
-
-        $scope.model.estimate = "";
-        $scope.revQuarterlyOpts = {
-            bars: {
-                show: true
+        $scope.details = {
+            visible : false,
+            completelyOpen : false,
+            onopen : function () {
+                $scope.details.visible = true;
+                $scope.graphs.regraph = true;
             },
-            xaxis: {
-                ticks: [[0.5,"Q3"],[1.5,"Q4"],[2.5,"Q1"],[3.5,"Q2"]],
-                tickLength: 0, // disable tick
-                min: 0,
-                max: 4
-            },
-            yaxis: {
-                tickLength: 0, // disable tick,
-                min: 5000,
-                max : 6000
+            onclose : function () {
+                $scope.details.visible = false;
             }
         };
 
-        $scope.model.data = {
-            revQuarterly: [],
-            realtime: []
+        $scope.graphs = {
+            regraph: false,
+            revQuarterlyOpts: {
+                bars: {
+                    show: true
+                },
+                xaxis: {
+                    ticks: [
+                        [0.5, "Q3"],
+                        [1.5, "Q4"],
+                        [2.5, "Q1"],
+                        [3.5, "Q2"]
+                    ],
+                    tickLength: 0, // disable tick
+                    min: 0,
+                    max: 4
+                },
+                yaxis: {
+                    tickLength: 0, // disable tick,
+                    min: 5000,
+                    max: 6000
+                }
+            },
+            revQuarterly: [
+                [0, 5651],
+                [1, 5544],
+                [2, 5370],
+                [3, 5468]
+            ]
         };
 
-        $scope.model.data.revQuarterly = [
-            [0, 5651],
-            [1, 5544],
-            [2, 5370],
-            [3, 5468]
-        ];
-
-        $scope.model.visibility = false;
-        $scope.toggleVisibility = function () {
-            $scope.model.visibility = !$scope.model.visibility;
+        $scope.data = {
+            userEstimate : -1,
+            crowdsourced : 0,
+            actual: 0
         };
 
-        $scope.model.gaveEstimate = false;
+        $scope.gaveEstimate = function () {
+            return $scope.data.userEstimate != -1;
+        };
+
         $scope.onsub = function(estimate, slideBox) {
             slideBox.$getByHandle('revenueScroller').slide(1);
-            $scope.model.estimate = estimate;
-            $scope.model.gaveEstimate = true;
+            $scope.data.userEstimate = estimate;
 
-            $http.post("/api/estimate", {company :$rootScope.company, metric : "revenue", estimate : estimate })
+            $http.post("/company/0/guess", {company :$rootScope.company, metric : "revenue", estimate : estimate })
                 .success(function(data, status, headers, config) {
                     console.log("POSTed the estimate!");
                 }).
@@ -264,21 +249,11 @@ angular.module('starter.controllers', [])
                     console.log("Error POSTing estimate");
                 });
         };
-
-        $scope.regraph = false;
-        $scope.onopen = function(){
-            $scope.regraph = true;
-        };
-        $scope.onclose = function () {
-            $scope.regraph = false;
-        }
     })
     .controller('HomeCtrl', function ($scope, $state, $http, $rootScope) {
-        //TODO: Replace with AJAX
         $scope.companies = [];
         $http.get("/company")
             .success(function(data, status, headers, config) {
-                console.log(data);
                 $scope.companies = data.companies;
                 console.log("GET the estimate!");
             }).
@@ -440,9 +415,9 @@ angular.module('starter.controllers', [])
                 $(el).keypress(function(ev){
                     var keyCode = window.event ? ev.keyCode : ev.which;
                     //codes for 0-9
-                    if (keyCode < 48 || keyCode > 57) {
+                    if (keyCode < 48 || keyCode > 57 || keyCode == 110 || keyCode == 46) {
                         //codes for backspace, delete, enter
-                        if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+                        if (keyCode != 0 && keyCode != 8 && keyCode != 13 && keyCode != 190 && keyCode != 46 && !ev.ctrlKey) {
                             ev.preventDefault();
                         }
                     }

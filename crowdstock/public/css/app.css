@@ -104,3 +104,24 @@ h2.value {
     display: inline-block;
     font-weight: bold;
 }
+
+.dib {
+    display: inline-block;
+}
+
+.fr {
+    float: right;
+}
+
+.portfolio-item {
+    background-color: skyblue;
+}
+
+button.submitEstimate {
+    display: block;
+    margin: auto;
+}
+
+.dn {
+    display: none;
+}

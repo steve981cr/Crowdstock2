@@ -5,24 +5,24 @@
     <ion-content padding="true">
         <div ng-controller="RevenueCtrl">
             <div class="list head">
-                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}" ng-click="toggleVisibility()">
-                    <h2 style="display: inline-block;">Q2 Revenue</h2>
-                    <span style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
-                    <span style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}" ng-click="details.visible = !details.visible">
+                    <h2 class="dib">Q2 Revenue</h2>
+                    <span class="fr" ng-show="!details.visible">&nbsp;&#9660;</span>
+                    <span class="fr" ng-show="details.visible">&nbsp;&#9650;</span>
 
                     <h2 class="value">$5,468 M</h2>
                 </div>
 
-                <div class="item details" slide="model.visibility" open="isOpenComplete" onopen="onopen" onclose="onclose">
+                <div class="item details" slide="details.visible" open="details.completelyOpen" onopen="details.onopen" onclose="details.onclose">
                     <ion-slide-box show-pager="false" delegate-handle="revenueScroller">
                         <ion-slide>
                             <div class="graph-title">
                                 <span>Revenue per Quarter</span>
-                                <div graph="revQuarterlyOpts" model="model.data.revQuarterly" regraph="regraph"></div>
+                                <div graph="graphs.revQuarterlyOpts" model="graphs.revQuarterly" regraph="graphs.regraph"></div>
                             </div>
                         </ion-slide>
-                        <ion-slide ng-class="{'estimate-only-tab' : !model.gaveEstimate}">
-                            <div ng-show="model.gaveEstimate">
+                        <ion-slide ng-class="{'estimate-only-tab' : !gaveEstimate()}">
+                            <div ng-show="gaveEstimate()">
                                 <h2 class="tac underline">Estimates</h2>
                                 <div class="row" style="padding-top: 0;">
                                     <div class="col tal" style="padding-top: 0;">
@@ -32,7 +32,7 @@
                                 <div class="row" style="padding-top: 0;">
                                     <div class="col tar" style="padding-top: 0;">
                                         <h1 style="font-size: 30px;">
-                                            ${{model.estimate | number}} M
+                                            ${{data.userEstimate | number}} M
                                         </h1>
                                     </div>
                                 </div>
@@ -49,7 +49,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div ng-show="!model.gaveEstimate">
+                            <div ng-show="!gaveEstimate()">
                                 <h2 class="normal tac">Please give your estimate to view what the community says!</h2>
                             </div>
                         </ion-slide>
@@ -62,9 +62,9 @@
         <div ng-controller="DummyCtrl">
             <div class="list head">
                 <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
-                    <h2 style="display: inline-block;">EPS</h2>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+                    <h2 class="dib">EPS</h2>
+                    <span ng-click="toggleVisibility()" class="fr" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" class="fr" ng-show="model.visibility">&nbsp;&#9650;</span>
 
                     <h2 class="value">$7.15</h2>
                 </div>
@@ -74,31 +74,31 @@
 
         <div ng-controller="PECtrl">
             <div class="list head">
-                <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
-                    <h2 style="display: inline-block;">P/E Ratio</h2>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+                <div class="item rounded toggle-btn" ng-class="{'open' : details.completelyOpen, 'closed' : !details.completelyOpen}" ng-click="details.visible = !details.visible">
+                    <h2 class="dib">P/E Ratio</h2>
+                    <span class="fr" ng-show="!details.visible">&nbsp;&#9660;</span>
+                    <span class="fr" ng-show="details.visible">&nbsp;&#9650;</span>
 
-                    <h2 class="value">{{model.data.crowdsourced_actual}}</h2>
+                    <h2 class="value">{{data.actual}}</h2>
                 </div>
 
-                <div class="item details" slide="model.visibility" open="isOpenComplete" onopen="onopen" onclose="onclose">
+                <div class="item details" slide="details.visible" open="details.completelyOpen" onopen="details.onopen" onclose="details.onclose">
                     <ion-slide-box show-pager="false" delegate-handle="peScroller">
                         <ion-slide>
                             <div class="graph-title">
                                 <span>P/E History</span>
-                                <div graph="dummy.dummy_graph_opts" model="dummy.dummy_graph" regraph="x.regraph"></div>
+                                <div graph="graphs.PEvsDateOpts" model="graphs.PEvsDate" regraph="graphs.regraph"></div>
                             </div>
                         </ion-slide>
-                        <ion-slide ng-class="{'estimate-only-tab' : !model.gaveEstimate}">
-                            <div ng-show="model.gaveEstimate">
+                        <ion-slide ng-class="{'estimate-only-tab' : !gaveEstimate()}">
+                            <div ng-show="gaveEstimate()">
                                 <div class="graph-title">
                                     <span>Realtime Community P/E</span>
                                     <input type="button" value="d" ng-click="demo()" />
-                                    <div graph="median_graph_opts" model="median_graph_data" regraph="x.regraph"></div>
+                                    <div graph="graphs.crowdsourcedOpts" model="graphs.crowdsourced" regraph="graphs.regraph"></div>
                                 </div>
                             </div>
-                            <div ng-show="!model.gaveEstimate">
+                            <div ng-show="!gaveEstimate()">
                                 <h2 class="normal tac">Please give your estimate to view what the community says!</h2>
                             </div>
                         </ion-slide>
@@ -111,9 +111,9 @@
         <div ng-controller="DummyCtrl">
             <div class="list head">
                 <div class="item rounded toggle-btn" ng-class="{'open' : model.isOpenComplete, 'closed' : !model.isOpenComplete}">
-                    <h2 style="display: inline-block;">Stock Price</h2>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="!model.visibility">&nbsp;&#9660;</span>
-                    <span ng-click="toggleVisibility()" style="float:right;" ng-show="model.visibility">&nbsp;&#9650;</span>
+                    <h2 class="dib">Stock Price</h2>
+                    <span ng-click="toggleVisibility()" class="fr" ng-show="!model.visibility">&nbsp;&#9660;</span>
+                    <span ng-click="toggleVisibility()" class="fr" ng-show="model.visibility">&nbsp;&#9650;</span>
 
                     <h2 class="value">$82.29</h2>
                 </div>

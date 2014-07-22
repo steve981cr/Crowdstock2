@@ -1,12 +1,12 @@
 <div class="estimate-entry">
     <div class="btn-row">
-        <button class="button button-positive rounded"
-                style="display: block;margin: auto;" ng-click="toggleView(true)"
+        <button class="button button-positive rounded submitEstimate"
+                ng-click="toggleView(true)"
                 ng-disabled="disabled.giveEstimateBtn">
             {{myText}}
         </button>
     </div>
-    <div class="entry-row" style="display: none">
+    <div class="entry-row dn">
         <div class="list">
             <label class="item item-input estimate">
                 <input num type="text" placeholder="Estimate" ng-model="data.entry">
